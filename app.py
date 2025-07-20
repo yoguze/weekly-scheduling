@@ -12,7 +12,7 @@ if USE_PDFKIT:
     import pdfkit
     pdfkit_config = pdfkit.configuration(wkhtmltopdf=r'C:\Users\numan\weekly-scheduling\wkhtmltopdf\bin\wkhtmltopdf.exe')
 else:
-    from weasyprint import HTML
+    from weasyprint import HTML,CSS
 
 calendar_events = []
 flexible_event_pool = []
@@ -151,7 +151,7 @@ def download_pdf():
         options = {'encoding': "UTF-8"}
         pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
     else:
-        pdf = HTML(string=html_content).write_pdf()
+        pdf = HTML(string=html_content).write_pdf(styleseets=[CSS(string='body{font-family: Noto Sans JP}')])
 
     return send_file(
         io.BytesIO(pdf),
