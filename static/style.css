@@ -91,7 +91,8 @@ button {
     display: block;
     width: 100%;
     max-width: 80vw;
-    margin-bottom: 1vh;
+    margin-top: 1vh;
+    margin-bottom:1vh;
 }
 
 /* レスポンシブ対応 */

@@ -1,18 +1,26 @@
 from flask import Flask, render_template, request, jsonify, send_file
 from datetime import datetime, timedelta
 import random
-import pdfkit
 import io
+import os
 
 app = Flask(__name__)
 
+USE_PDFKIT = os.getenv('USE_PDFKIT', 'False') == 'True'
+
+if USE_PDFKIT:
+    import pdfkit
+    pdfkit_config = pdfkit.configuration(wkhtmltopdf=r'C:\Users\numan\weekly-scheduling\wkhtmltopdf\bin\wkhtmltopdf.exe')
+else:
+    from weasyprint import HTML
+
 calendar_events = []
-flexible_event_pool = []  # 柔軟予定の管理用
+flexible_event_pool = []
 
 def assign_flexible_event(event):
     today = datetime.now().date()
     if event['deadline'] < today:
-        return None  # 締切超過
+        return None
 
     delta_days = (event['deadline'] - today).days
     candidate_days = [(today + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(delta_days + 1)]
@@ -34,11 +42,11 @@ def assign_flexible_event(event):
                 "deadline": event['deadline'],
                 "added_at": event['added_at']
             }
-    return None  # 空き枠なし
+    return None
 
 def reschedule_flexible_events():
     global calendar_events
-    calendar_events = [e for e in calendar_events if e['fixed']]  # 固定だけ残す
+    calendar_events = [e for e in calendar_events if e['fixed']]
 
     sorted_pool = sorted(flexible_event_pool, key=lambda e: (-e['priority'], e['deadline'], e['added_at']))
 
@@ -135,17 +143,16 @@ def reset_all():
     flexible_event_pool.clear()
     return '', 204
 
-pdfkit_config = pdfkit.configuration(wkhtmltopdf=r'C:\Users\numan\weekly-scheduling\wkhtmltopdf\bin\wkhtmltopdf.exe')
-
 @app.route('/download_pdf')
 def download_pdf():
     html_content = generate_calendar_html(calendar_events)
 
-    options = {
-        'encoding': "UTF-8",  # ✅ 日本語文字化け対策
-    }
+    if USE_PDFKIT:
+        options = {'encoding': "UTF-8"}
+        pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
+    else:
+        pdf = HTML(string=html_content).write_pdf()
 
-    pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
     return send_file(
         io.BytesIO(pdf),
         mimetype='application/pdf',
