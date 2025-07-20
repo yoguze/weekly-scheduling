@@ -151,7 +151,7 @@ def download_pdf():
         options = {'encoding': "UTF-8"}
         pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
     else:
-        pdf = HTML(string=html_content).write_pdf(styleseets=[CSS(string='body{font-family: Noto Sans JP}')])
+        pdf = HTML(string=html_content).write_pdf(stylesheets=[CSS(string='body{font-family: Noto Sans JP}')])
 
     return send_file(
         io.BytesIO(pdf),
