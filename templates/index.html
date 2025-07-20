@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIスケジューラー - 予定管理</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+
+<h2>予定を入れてください</h2>
+
+<label for="priority">優先度:</label>
+<select id="priority" onchange="toggleForm()">
+    <option value="">選択してください</option>
+    <option value="1">1 - 優先度低</option>
+    <option value="2">2 - やや低</option>
+    <option value="3">3 - 普通</option>
+    <option value="4">4 - やや高</option>
+    <option value="5">5 - 高</option>
+    <option value="6">6 - 固定予定（変更不可）</option>
+</select>
+
+<div id="flexibleForm" class="hidden">
+    <label for="title">タイトル:</label>
+    <input type="text" id="title">
+
+    <label for="hours">必要な時間（h）:</label>
+    <input type="number" id="hours" min="1" max="12">
+
+    <label for="deadline">締切日:</label>
+    <input type="date" id="deadline">
+</div>
+
+<div id="fixedForm" class="hidden">
+    <label for="taskTitle">タイトル:</label>
+    <input type="text" id="taskTitle">
+
+    <label for="fixedDate">日付:</label>
+    <input type="date" id="fixedDate">
+
+    <label for="startTime">開始時刻:</label>
+    <select id="startTime">
+        <!-- JSで動的追加 -->
+    </select>
+
+    <label for="endTime">終了時刻:</label>
+    <select id="endTime">
+        <!-- JSで動的追加 -->
+    </select>
+</div>
+
+<button onclick="submitForm()">追加・変更</button>
+<button onclick="resetAllEvents()">全予定リセット</button>
+
+<div id="log"></div>
+
+<h3>週間カレンダー</h3>
+<div id="calendarView">{{ calendar_html | safe }}</div>
+
+<button onclick="downloadPDF()">PDFでダウンロード</button>
+
+</body>
+</html>
