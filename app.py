@@ -1,18 +1,14 @@
+# ✅ 修正済み app.py
 from flask import Flask, render_template, request, jsonify, send_file
 from datetime import datetime, timedelta
 import random
 import io
 import os
+import pdfkit
 
 app = Flask(__name__)
 
-USE_PDFKIT = os.getenv('USE_PDFKIT', 'False') == 'True'
-
-if USE_PDFKIT:
-    import pdfkit
-    pdfkit_config = pdfkit.configuration(wkhtmltopdf=r'C:\Users\numan\weekly-scheduling\wkhtmltopdf\bin\wkhtmltopdf.exe')
-else:
-    from weasyprint import HTML,CSS
+pdfkit_config = pdfkit.configuration(wkhtmltopdf=r'C:\Users\numan\weekly-scheduling\wkhtmltopdf\bin\wkhtmltopdf.exe')
 
 calendar_events = []
 flexible_event_pool = []
@@ -23,13 +19,16 @@ def assign_flexible_event(event):
         return None
 
     delta_days = (event['deadline'] - today).days
-    candidate_days = [(today + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(delta_days + 1)]
+    candidate_days = [(today + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(1,delta_days + 1)]
 
     for date in candidate_days:
-        available_hours = [h for h in range(9, 24 - event['hours'] + 1) if not any(
-            e['date'] == date and not (e['end_hour'] <= h or e['hour'] >= h + event['hours'])
-            for e in calendar_events
-        )]
+        available_hours = [
+            h for h in range(9, 24 - event['hours'] + 1)
+            if not any(
+                e['date'] == date and not (e['end_hour'] <= h or e['hour'] >= h + event['hours'])
+                for e in calendar_events
+            )
+        ]
         if available_hours:
             selected_hour = random.choice(available_hours)
             return {
@@ -38,7 +37,6 @@ def assign_flexible_event(event):
                 "hour": selected_hour,
                 "end_hour": selected_hour + event['hours'] - 1,
                 "fixed": False,
-                "priority": event['priority'],
                 "deadline": event['deadline'],
                 "added_at": event['added_at']
             }
@@ -48,9 +46,7 @@ def reschedule_flexible_events():
     global calendar_events
     calendar_events = [e for e in calendar_events if e['fixed']]
 
-    sorted_pool = sorted(flexible_event_pool, key=lambda e: (-e['priority'], e['deadline'], e['added_at']))
-
-    for event in sorted_pool:
+    for event in flexible_event_pool:
         assigned = assign_flexible_event(event)
         if assigned:
             calendar_events.append(assigned)
@@ -99,7 +95,6 @@ def add_flexible():
     flexible_event_pool.append({
         "title": title,
         "hours": hours,
-        "priority": 3,
         "deadline": deadline,
         "added_at": datetime.now()
     })
@@ -109,6 +104,8 @@ def add_flexible():
 
 @app.route('/add_fixed', methods=['POST'])
 def add_fixed():
+    global calendar_events  # ← ここに移動！
+
     data = request.get_json()
     title = data.get('taskTitle')
     fixed_date = data.get('fixedDate')
@@ -124,6 +121,14 @@ def add_fixed():
     ):
         return jsonify({"message": "この時間帯にはすでに固定予定が登録されています。"})
 
+    calendar_events = [
+        e for e in calendar_events if not (
+            e['date'] == fixed_date and
+            not (e['end_hour'] <= start_hour or e['hour'] >= end_hour) and
+            not e['fixed']
+        )
+    ]
+
     calendar_events.append({
         "title": title,
         "date": fixed_date,
@@ -131,6 +136,8 @@ def add_fixed():
         "end_hour": end_hour,
         "fixed": True
     })
+
+    reschedule_flexible_events()
     return jsonify({"message": "固定予定を追加しました。"})
 
 @app.route('/get_calendar')
@@ -147,11 +154,12 @@ def reset_all():
 def download_pdf():
     html_content = generate_calendar_html(calendar_events)
 
-    if USE_PDFKIT:
-        options = {'encoding': "UTF-8"}
-        pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
-    else:
-        pdf = HTML(string=html_content).write_pdf(stylesheets=[CSS(string='body{font-family: Noto Sans JP}')])
+    options = {
+        'encoding': "UTF-8",
+        'enable-local-file-access': None
+    }
+
+    pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
 
     return send_file(
         io.BytesIO(pdf),
@@ -161,4 +169,6 @@ def download_pdf():
     )
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=10000)
+    port = int(os.getenv('FLASK_RUN_PORT', 5001))
+    debug_mode = os.getenv('FLASK_DEBUG', 'True') == 'True'
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)

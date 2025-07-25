@@ -5,22 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIスケジューラー - 予定管理</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
     <script defer src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 <body>
 
 <h2>予定を入れてください</h2>
 
-<label for="priority">優先度:</label>
-<select id="priority" onchange="toggleForm()">
+<label for="planType">予定タイプ:</label>
+<select id="planType" onchange="toggleForm()">
     <option value="">選択してください</option>
-    <option value="1">1 - 優先度低</option>
-    <option value="2">2 - やや低</option>
-    <option value="3">3 - 普通</option>
-    <option value="4">4 - やや高</option>
-    <option value="5">5 - 高</option>
-    <option value="6">6 - 固定予定（変更不可）</option>
+    <option value="flexible">柔軟予定</option>
+    <option value="fixed">固定予定</option>
 </select>
 
 <div id="flexibleForm" class="hidden">
@@ -52,8 +50,8 @@
     </select>
 </div>
 
-<button onclick="submitForm()">追加・変更</button>
-<button onclick="resetAllEvents()">全予定リセット</button>
+<button type="button" onclick="submitForm()">追加・変更</button>
+<button type="button" onclick="resetAllEvents()">全予定リセット</button>
 
 <div id="log"></div>
 

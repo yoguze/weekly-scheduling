@@ -7,13 +7,13 @@ window.onload = () => {
 };
 
 function toggleForm() {
-    const priority = parseInt(document.getElementById("priority").value);
+    const type = document.getElementById("planType").value;
     document.getElementById("flexibleForm").classList.add("hidden");
     document.getElementById("fixedForm").classList.add("hidden");
 
-    if (priority >= 1 && priority <= 5) {
+    if (type === "flexible") {
         document.getElementById("flexibleForm").classList.remove("hidden");
-    } else if (priority === 6) {
+    } else if (type === "fixed") {
         document.getElementById("fixedForm").classList.remove("hidden");
     }
 }
@@ -35,14 +35,14 @@ function addOption(selectElement, hour) {
 }
 
 function submitForm() {
-    const priority = parseInt(document.getElementById("priority").value);
+    const type = document.getElementById("planType").value;
 
-    if (priority >= 1 && priority <= 5) {
+    if (type === "flexible") {
         handleFlexible();
-    } else if (priority === 6) {
+    } else if (type === "fixed") {
         handleFixed();
     } else {
-        setLog("優先度を選んでください。", "error");
+        setLog("予定タイプを選んでください。", "error");
     }
 }
 
@@ -56,6 +56,8 @@ function handleFlexible() {
         return;
     }
 
+    unsavedChanges = true;
+
     fetch("/add_flexible", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -67,8 +69,6 @@ function handleFlexible() {
             fetchCalendar();
             unsavedChanges = false;
         });
-
-    unsavedChanges = true;
 }
 
 function handleFixed() {
@@ -87,6 +87,8 @@ function handleFixed() {
         return;
     }
 
+    unsavedChanges = true;
+
     fetch("/add_fixed", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -98,8 +100,6 @@ function handleFixed() {
             fetchCalendar();
             unsavedChanges = false;
         });
-
-    unsavedChanges = true;
 }
 
 function setLog(message, type) {
