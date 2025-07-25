@@ -1,4 +1,6 @@
 /* リセットCSS */
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +8,7 @@
 }
 
 body {
-    font-family: 'Noto Sans JP';;
+      font-family: 'M PLUS 1p', 'Meiryo', serif !important;
     background-color: #f4f4f4;
     color: #333;
     padding: 5vw;

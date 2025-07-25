@@ -152,7 +152,8 @@ def download_pdf():
         pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
     else:
         html_content = generate_calendar_html(calendar_events)
-        css = CSS(string='body { font-family: "M PLUS 1p", sans-serif !important; }')
+        css = CSS(string='@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap"); '
+                     'body { font-family: "M PLUS 1p", serif !important; }')
         pdf = HTML(string=html_content).write_pdf(stylesheets=[css])
         
     return send_file(
