@@ -146,15 +146,14 @@ def reset_all():
 @app.route('/download_pdf')
 def download_pdf():
     html_content = generate_calendar_html(calendar_events)
-
     if USE_PDFKIT:
         options = {'encoding': "UTF-8"}
         pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
     else:
-        pdf = HTML(string=f"""<style>@font-face {{font-family: 'NotoSansJP'; src: url('file:///path/to/NotoSansJP-Regular.otf');}}
-      body {{font-family: 'NotoSansJP';}}</style>{html_content}""").write_pdf()
-
-
+        html_content = generate_calendar_html(calendar_events)
+        css = CSS(string='body { font-family: "M PLUS 1p", sans-serif !important; }')
+        pdf = HTML(string=html_content).write_pdf(stylesheets=[css])
+        
     return send_file(
         io.BytesIO(pdf),
         mimetype='application/pdf',
