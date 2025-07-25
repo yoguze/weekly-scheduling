@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import random
 import io
 import os
+from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 
@@ -18,7 +19,7 @@ calendar_events = []
 flexible_event_pool = []
 
 def assign_flexible_event(event):
-    today = datetime.now().date()
+    today = datetime.now(ZoneInfo("Asia/Tokyo")).date()
     if event['deadline'] < today:
         return None
 
