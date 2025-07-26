@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'IPAfont';
-  src: url('/static/fonts/ipag.ttf') format('truetype');
+  src: url('/static/fonts/ipaexm.ttf') format('truetype');
 }
 
 * {
@@ -10,7 +10,7 @@
 }
 
 body {
-    font-family: 'IPAfont', sans-serif;
+    font-family: 'IPAexMincho', sans-serif;
     background-color: #f4f4f4;
     color: #333;
     padding: 5vw;

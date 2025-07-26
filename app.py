@@ -150,14 +150,14 @@ def download_pdf():
     else:
         html_content = generate_calendar_html(calendar_events)
         from weasyprint import CSS
-        font_path = os.path.join(app.root_path, 'static', 'fonts', 'ipag.ttf')
+        font_path = os.path.join(app.root_path, 'static', 'fonts', 'ipaexm.ttf')
         css = CSS(string=f'''
             @font-face {{
-                font-family: "IPAfont";
+                font-family: "IPAexMincho";
                 src: url("file://{font_path}");
             }}
             body {{
-                font-family: "IPAfont";
+                font-family: "IPAexMincho";
             }}
             ''')
         pdf = HTML(string=html_content).write_pdf(stylesheets=[css])
