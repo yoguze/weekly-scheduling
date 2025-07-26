@@ -154,7 +154,7 @@ def download_pdf():
         css = CSS(string=f'''
             @font-face {{
                 font-family: IPAexMincho;
-                src: url("{font_path}");
+                src: url("file://{font_path}");
             }}
             body {{
                 font-family: "IPAexMincho";
