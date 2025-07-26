@@ -39,7 +39,6 @@ def assign_flexible_event(event):
                 "hour": selected_hour,
                 "end_hour": selected_hour + event['hours'] - 1,
                 "fixed": False,
-                "priority": event['priority'],
                 "deadline": event['deadline'],
                 "added_at": event['added_at']
             }
@@ -74,8 +73,7 @@ def generate_calendar_html(events):
             for event in events:
                 if event['date'] == day:
                     if event['hour'] == hour:
-                        style = "font-weight:bold;" if event['fixed'] else ""
-                        cell_content = f"<div style='{style}'>{event['title']}</div>"
+                        cell_content = f"<div>{event['title']}</div>"
                     elif event['hour'] < hour <= event['end_hour']:
                         cell_content = "〃"
             html += f"<td>{cell_content}</td>"
