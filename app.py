@@ -171,7 +171,6 @@ def download_pdf():
 
 if __name__ == '__main__':
     import os
-
     port = int(os.getenv('FLASK_RUN_PORT', 10000))  # デフォルト: 10000（本番）
     debug_mode = os.getenv('FLASK_DEBUG', 'False') == 'True'
     app.run(debug=debug_mode, host='0.0.0.0', port=port)
