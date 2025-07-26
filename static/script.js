@@ -127,25 +127,6 @@ function resetAllEvents() {
     }
 }
 
-function setupLeaveWarning() {
-    window.addEventListener("beforeunload", function (e) {
-        if (unsavedChanges) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
-
-    document.querySelectorAll("a, button").forEach(el => {
-        el.addEventListener("click", function (e) {
-            if (unsavedChanges) {
-                if (!confirm("設定した予定は保存されません。別のページに移動しますか？")) {
-                    e.preventDefault();
-                }
-            }
-        });
-    });
-}
-
 function downloadPDF() {
     window.location.href = "/download_pdf";
 }

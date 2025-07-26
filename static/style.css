@@ -1,5 +1,7 @@
-/* リセットCSS */
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap');
+@font-face {
+  font-family: 'IPAfont';
+  src: url('/static/fonts/ipag.ttf') format('truetype');
+}
 
 * {
     margin: 0;
@@ -8,7 +10,7 @@
 }
 
 body {
-      font-family: 'M PLUS 1p', 'Meiryo', serif !important;
+    font-family: 'IPAfont', sans-serif;
     background-color: #f4f4f4;
     color: #333;
     padding: 5vw;

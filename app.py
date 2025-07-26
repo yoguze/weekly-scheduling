@@ -100,7 +100,6 @@ def add_flexible():
     flexible_event_pool.append({
         "title": title,
         "hours": hours,
-        "priority": 3,
         "deadline": deadline,
         "added_at": datetime.now()
     })
@@ -152,8 +151,17 @@ def download_pdf():
         pdf = pdfkit.from_string(html_content, False, configuration=pdfkit_config, options=options)
     else:
         html_content = generate_calendar_html(calendar_events)
-        css = CSS(string='@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap"); '
-                     'body { font-family: "M PLUS 1p", serif !important; }')
+        from weasyprint import CSS
+        font_path = os.path.join(app.root_path, 'static', 'fonts', 'ipag.ttf')
+        css = CSS(string=f'''
+            @font-face {{
+                font-family: "IPAfont";
+                src: url("file://{font_path}");
+            }}
+            body {{
+                font-family: "IPAfont";
+            }}
+            ''')
         pdf = HTML(string=html_content).write_pdf(stylesheets=[css])
         
     return send_file(
