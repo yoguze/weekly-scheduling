@@ -153,8 +153,8 @@ def download_pdf():
         font_path = os.path.join(app.root_path, 'static', 'fonts', 'ipaexm.ttf')
         css = CSS(string=f'''
             @font-face {{
-                font-family: "IPAexMincho";
-                src: url("file://{font_path}");
+                font-family: IPAexMincho;
+                src: url("{font_path}");
             }}
             body {{
                 font-family: "IPAexMincho";
