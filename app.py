@@ -48,7 +48,7 @@ def reschedule_flexible_events():
     global calendar_events
     calendar_events = [e for e in calendar_events if e['fixed']]
 
-    sorted_pool = sorted(flexible_event_pool, key=lambda e: (-e['priority'], e['deadline'], e['added_at']))
+    sorted_pool = sorted(flexible_event_pool, key=lambda e: (e['deadline'], e['added_at']))
 
     for event in sorted_pool:
         assigned = assign_flexible_event(event)
